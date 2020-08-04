@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "i3-live-tree"
+version = "0.1.0"
+description = "i3 live tree representation"
+authors = ["Davide Laezza <truzzialrogo@gmx.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+i3ipc = "^2.2.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
