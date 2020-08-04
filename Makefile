@@ -5,4 +5,4 @@
 EXEC := poetry run
 
 test:
-	$(EXEC) python -m unittest
+	$(EXEC) python -m unittest -v
