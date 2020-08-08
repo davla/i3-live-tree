@@ -1,0 +1,55 @@
+# This workflos is based on the default python app one, available at
+# https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Test and lint
+
+on:
+  push:
+    branches-ignore:
+    - skipci/**
+  pull_request:
+    types:
+    - opened
+    - ready_for_review
+    - reopened
+    - synchronize
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone the repository
+      uses: actions/checkout@v2
+
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install poetry
+      uses: dschep/install-poetry-action@v1
+      with:
+        create_virtualenvs: true
+
+    - name: Remove poetry installation script
+      shell: sh
+      run: |
+        rm -f get-poetry.py
+
+    - name: Install CI tools
+      run: |
+        sudo apt-get install make
+        pip install pylama
+
+    - name: Install dependencies
+      run: |
+        poetry install --no-root
+
+    - name: Run unit tests
+      run: |
+        make test
+
+    - name: Lint and static checking
+      run: |
+        pylama
