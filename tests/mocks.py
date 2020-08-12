@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 from i3ipc.aio import Con
 
@@ -25,3 +25,20 @@ class MockConSerializer(Mock, Con):
         self.layout = layout
         self.name = name
         self.nodes = nodes
+
+
+class MockConNavigation(Mock):
+    """Mock an i3ipc.aio.Con window for navigation purposes
+
+    This Mock is meant to be used when testing i3ipc event handlers. The parent
+    workspace is a MagicMock, so assertions can be used for the serialization
+    methods as well.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.mock_workspace = MagicMock()
+
+    def workspace(self):
+        """Return the (mocked) containing workspace"""
+        return self.mock_workspace
