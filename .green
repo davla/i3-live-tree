@@ -1,0 +1,7 @@
+# This file configures green python test runner
+# https://github.com/CleanCut/green#green
+
+quiet-stdout = True
+run-coverage = True
+termcolor = True
+verbose = 2
