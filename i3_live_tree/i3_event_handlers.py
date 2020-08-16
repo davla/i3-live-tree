@@ -34,9 +34,9 @@ class TickPayload:
         return cls(**input)
 
 
-def print_workspace(window: Con) -> None:
-    """Draw the window's parent workspace if it exists"""
-    workspace = window.workspace()
+def print_active_workspace(tree: Con) -> None:
+    """Draw the currently active workspace"""
+    workspace = tree.find_focused().workspace()
     if workspace:
         print(str(workspace))
 
@@ -49,8 +49,7 @@ async def on_window_event(i3: Connection, event: WindowEvent) -> None:
     considered.
     """
     if event.change in WINDOW_EVENT_CHANGE:
-        window = (await i3.get_tree()).find_by_id(event.container.id)
-        print_workspace(window)
+        print_active_workspace(await i3.get_tree())
 
 
 async def on_tick_event(i3: Connection, event: TickEvent) -> None:
@@ -65,7 +64,6 @@ async def on_tick_event(i3: Connection, event: TickEvent) -> None:
     try:
         payload = json.loads(event.payload, object_hook=TickPayload.parse)
         if payload.is_live_tree:
-            window = (await i3.get_tree()).find_focused()
-            print_workspace(window)
+            print_active_workspace(await i3.get_tree())
     except (JSONDecodeError, TypeError):
         pass

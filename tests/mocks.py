@@ -37,15 +37,6 @@ class MockConNavigation(MagicMock):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    @property
-    def id(self):
-        """Return the container id"""
-        return id(self)
-
-    def find_by_id(self, id):
-        """Return the window having the give id"""
-        return self
-
     def find_focused(self):
         """Return the focused window"""
         return self
