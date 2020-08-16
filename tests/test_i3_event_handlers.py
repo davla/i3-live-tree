@@ -1,53 +1,52 @@
 import json
-from unittest import IsolatedAsyncioTestCase, TestCase
-from unittest.mock import AsyncMock, Mock
+from unittest import IsolatedAsyncioTestCase
+from unittest.mock import Mock
 
 from i3_live_tree.i3_event_handlers import (WINDOW_EVENT_CHANGE, on_tick_event,
                                             on_window_event)
 
-from .mocks import MockConNavigation
+from .mocks import MockConNavigation, MockI3
 
 
-class TreeChangeHandlerTest(TestCase):
-    def test_window_event_ignored(self):
+class TreeChangeHandlerTest(IsolatedAsyncioTestCase):
+    def setUp(self):
+        self.window = MockConNavigation()
+        self.i3 = MockI3(tree=self.window)
+
+    async def test_window_event_ignored(self):
         # Given
         event = Mock(**{
             'chage': 'title',
-            'window': MockConNavigation()
+            'container': self.window
         })
 
         # When
-        on_window_event(None, event)
+        await on_window_event(self.i3, event)
 
         # Then
-        event.window.mock_workspace.__str__.assert_not_called()
+        self.window.workspace().__str__.assert_not_called()
 
-    def test_window_event_change(self):
+    async def test_window_event_change(self):
         for change in WINDOW_EVENT_CHANGE:
             with self.subTest():
                 # Given
+                self.window.reset_mock()
                 event = Mock(**{
                     'change': change,
-                    'window': MockConNavigation()
+                    'container': self.window
                 })
 
                 # When
-                on_window_event(None, event)
+                await on_window_event(self.i3, event)
 
                 # Then
-                event.window.mock_workspace.__str__.assert_called_once()
+                self.window.workspace().__str__.assert_called_once()
 
 
 class TickHandlerTest(IsolatedAsyncioTestCase):
     def setUp(self):
         self.window = MockConNavigation()
-        self.i3 = Mock(**{
-            'get_tree': AsyncMock(**{
-                'return_value': Mock(**{
-                    'find_focused.return_value': self.window
-                })
-            })
-        })
+        self.i3 = MockI3(tree=self.window)
 
     async def test_malformed_payload(self):
         # Given
@@ -60,7 +59,7 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
         await on_tick_event(self.i3, event)
 
         # Then
-        self.window.mock_workspace.assert_not_called()
+        self.window.workspace().__str__.assert_not_called()
 
     async def test_invalid_payload(self):
         # Given
@@ -75,7 +74,7 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
         await on_tick_event(self.i3, event)
 
         # Then
-        self.window.mock_workspace.assert_not_called()
+        self.window.workspace().__str__.assert_not_called()
 
     async def test_alien_tick_event(self):
         # Given
@@ -90,7 +89,7 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
         await on_tick_event(self.i3, event)
 
         # Then
-        self.window.mock_workspace.__str__.assert_not_called()
+        self.window.workspace().__str__.assert_not_called()
 
     async def test_own_tick_event(self):
         # Given
@@ -105,4 +104,4 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
         await on_tick_event(self.i3, event)
 
         # Then
-        self.window.mock_workspace.__str__.assert_called_once()
+        self.window.workspace().__str__.assert_called_once()

@@ -27,18 +27,42 @@ class MockConSerializer(Mock, Con):
         self.nodes = nodes
 
 
-class MockConNavigation(Mock):
-    """Mock an i3ipc.aio.Con window for navigation purposes
+class MockConNavigation(MagicMock):
+    """Mock an i3ipc.aio.Con for navigation purposes
 
-    This Mock is meant to be used when testing i3ipc event handlers. The parent
-    workspace is a MagicMock, so assertions can be used for the serialization
-    methods as well.
+    This Mock is meant to be used when testing i3ipc event handlers. It mocks
+    all the necessary methods and properties, by returning `self` when an
+    i3ipc.aio.Con instance is needed for the sake of simplicity.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.mock_workspace = MagicMock()
+    @property
+    def id(self):
+        """Return the container id"""
+        return id(self)
+
+    def find_by_id(self, id):
+        """Return the window having the give id"""
+        return self
+
+    def find_focused(self):
+        """Return the focused window"""
+        return self
 
     def workspace(self):
-        """Return the (mocked) containing workspace"""
-        return self.mock_workspace
+        """Return the containing workspace"""
+        return self
+
+
+class MockI3(Mock):
+    """Mock an i3ipc.aio.Connection"""
+
+    def __init__(self, *args, tree, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.tree = tree
+
+    async def get_tree(self):
+        """Return the i3 tree asynchronously"""
+        return self.tree

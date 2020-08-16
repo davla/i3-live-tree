@@ -41,7 +41,7 @@ def print_workspace(window: Con) -> None:
         print(str(workspace))
 
 
-def on_window_event(i3: Connection, event: WindowEvent) -> None:
+async def on_window_event(i3: Connection, event: WindowEvent) -> None:
     """Draw the event's window workspace
 
     This function redraws the workspace containing the window that triggered
@@ -49,7 +49,8 @@ def on_window_event(i3: Connection, event: WindowEvent) -> None:
     considered.
     """
     if event.change in WINDOW_EVENT_CHANGE:
-        print_workspace(event.window)
+        window = (await i3.get_tree()).find_by_id(event.container.id)
+        print_workspace(window)
 
 
 async def on_tick_event(i3: Connection, event: TickEvent) -> None:
