@@ -58,9 +58,6 @@ async def on_tick_event(i3: Connection, event: TickEvent) -> None:
     This function redraws the workspace containing the focused window. However,
     this only occurs if the event payload conforms to a specific schema.
     """
-    if event.first:
-        return
-
     try:
         payload = json.loads(event.payload, object_hook=TickPayload.parse)
         if payload.is_live_tree:

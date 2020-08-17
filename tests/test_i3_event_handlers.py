@@ -51,7 +51,6 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
     async def test_malformed_payload(self):
         # Given
         event = Mock(**{
-            'first': False,
             'payload': 'This [is not} json'
         })
 
@@ -64,7 +63,6 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
     async def test_invalid_payload(self):
         # Given
         event = Mock(**{
-            'first': False,
             'payload': json.dumps({
                 'bad_key': 'bad_value'
             })
@@ -79,7 +77,6 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
     async def test_alien_tick_event(self):
         # Given
         event = Mock(**{
-            'first': False,
             'payload': json.dumps({
                 'is_alien': True
             })
@@ -94,7 +91,6 @@ class TickHandlerTest(IsolatedAsyncioTestCase):
     async def test_own_tick_event(self):
         # Given
         event = Mock(**{
-            'first': False,
             'payload': json.dumps({
                 'is_live_tree': True
             })
