@@ -25,13 +25,14 @@ class TickPayload:
     """The payload of a TICK event"""
     is_live_tree: bool
 
-    def __init__(self, is_live_tree: bool):
+    def __init__(self, is_live_tree=False):
         self.is_live_tree = is_live_tree
 
     @classmethod
     def parse(cls: TickPayloadType, input: dict) -> TickPayloadType:
         """Create a TickPayload from a dict"""
-        return cls(**input)
+        is_live_tree = input.get('is_live_tree', False)
+        return cls(is_live_tree)
 
 
 def print_active_workspace(tree: Con) -> None:
