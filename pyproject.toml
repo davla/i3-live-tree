@@ -8,6 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.6"
 i3ipc = "^2.2.1"
+xlib = "^0.21"
+xvfbwrapper = "^0.2.9"
 
 [tool.poetry.dev-dependencies]
 green = "^3.2.1"

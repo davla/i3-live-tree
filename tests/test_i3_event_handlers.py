@@ -16,7 +16,7 @@ class TreeChangeHandlerTest(IsolatedAsyncioTestCase):
     async def test_window_event_ignored(self):
         # Given
         event = Mock(**{
-            'chage': 'title',
+            'change': 'title',
             'container': self.window
         })
 

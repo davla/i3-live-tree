@@ -27,7 +27,7 @@ class MockConSerializer(Mock, Con):
         self.nodes = nodes
 
 
-class MockConNavigation(MagicMock):
+class MockConNavigation(Mock):
     """Mock an i3ipc.aio.Con for navigation purposes
 
     This Mock is meant to be used when testing i3ipc event handlers. It mocks
@@ -36,6 +36,7 @@ class MockConNavigation(MagicMock):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.__str__ = Mock(return_value=str(self))
 
     def find_focused(self):
         """Return the focused window"""
@@ -44,6 +45,12 @@ class MockConNavigation(MagicMock):
     def workspace(self):
         """Return the containing workspace"""
         return self
+
+
+class MockCon(MockConNavigation, MockConSerializer):
+    def __init__(self, *args, **kwargs):
+        MockConNavigation.__init__(self, *args, **kwargs)
+        MockConSerializer.__init__(self, *args, **kwargs)
 
 
 class MockI3(Mock):
