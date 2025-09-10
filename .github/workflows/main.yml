@@ -22,34 +22,20 @@ jobs:
     - name: Clone the repository
       uses: actions/checkout@v2
 
+    - name: Read devbox Python version
+      run: |
+        jq '.packages.["python-full"].version | "PYTHON_VERSION=\(.)"' \
+            --raw-output devbox.json >> "$GITHUB_ENV"
+
     - name: Install Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.8
+        python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install poetry
-      uses: dschep/install-poetry-action@v1
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
       with:
-        create_virtualenvs: true
+        version: "0.8.15"
 
-    - name: Remove poetry installation script
-      shell: sh
-      run: |
-        rm -f get-poetry.py
-
-    - name: Install CI tools
-      run: |
-        sudo apt-get install make
-        pip install pylama
-
-    - name: Install dependencies
-      run: |
-        poetry install --no-root
-
-    - name: Run unit tests
-      run: |
-        make test
-
-    - name: Lint and static checking
-      run: |
-        pylama
+    - name: Test
+      run: uv run test --verbose
